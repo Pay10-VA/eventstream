@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.eventstream.dto.EventRequest;
+import com.example.eventstream.service.interfaces.KafkaProducerService;
 
 
 
@@ -15,8 +16,15 @@ import com.example.eventstream.dto.EventRequest;
 @RequestMapping("/api/events")
 public class EventController {
 
+    private KafkaProducerService kafkaProducer;
+
+    public EventController(KafkaProducerService kafkaProducer) {
+        this.kafkaProducer = kafkaProducer;
+    }
+
   @PostMapping
   public ResponseEntity<Void> postMethodName(@RequestBody EventRequest eventRequest) {
+      kafkaProducer.publishEvent(eventRequest);
       return ResponseEntity.ok().build();
   }
   

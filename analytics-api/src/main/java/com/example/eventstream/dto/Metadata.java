@@ -1,5 +1,8 @@
 package com.example.eventstream.dto;
 
+import lombok.Data;
+
+@Data
 public class Metadata {
   private String page;
   private String productId;
