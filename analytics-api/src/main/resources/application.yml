@@ -16,3 +16,8 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     topic:
       kafka-topic: "test-topic"
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
