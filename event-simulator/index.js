@@ -22,7 +22,6 @@ const DEVICE_TYPES = [
   "IPHONE",
   "ANDROID",
 ];
-// Weighted — 50% desktop, 33% iPhone, 17% Android
 
 const PAGES = ["/home", "/products", "/about", "/deals", "/new-arrivals"];
 
@@ -207,25 +206,28 @@ async function simulateUser(userNum) {
   const sessionId = `sess_${getUUID().slice(0, 8)}`;
   const deviceType = pick(DEVICE_TYPES);
   const baseMeta = { deviceType };
+  const counts = {};
+
+  async function track(userId, sessionId, eventType, meta = {}) {
+    counts[eventType] = (counts[eventType] || 0) + 1;
+    await sendEvent(userId, sessionId, eventType, meta);
+  }
 
   console.log(`\nUser ${userNum} (${userId}) — ${deviceType}`);
 
-  // Session start
-  await sendEvent(userId, sessionId, EVENTS.SESSION_START, baseMeta);
+  await track(userId, sessionId, EVENTS.SESSION_START, baseMeta);
   await sleep(100);
 
-  // Browse 1-3 pages
   const numPages = 1 + random(3);
   for (let p = 0; p < numPages; p++) {
     const page = pick(PAGES);
-    await sendEvent(userId, sessionId, EVENTS.PAGE_VIEW, { ...baseMeta, page });
+    await track(userId, sessionId, EVENTS.PAGE_VIEW, { ...baseMeta, page });
     await sleep(100);
   }
 
-  // Maybe search (60%)
   if (chance(60)) {
     const searchTerm = pick(SEARCH_TERMS);
-    await sendEvent(userId, sessionId, EVENTS.SEARCH, {
+    await track(userId, sessionId, EVENTS.SEARCH, {
       ...baseMeta,
       page: "/search",
       searchTerm,
@@ -233,20 +235,19 @@ async function simulateUser(userNum) {
     await sleep(100);
   }
 
-  // View 1-5 products
   const numProductViews = 1 + random(5);
   const cart = [];
 
   for (let v = 0; v < numProductViews; v++) {
     const product = pick(PRODUCTS);
 
-    await sendEvent(userId, sessionId, EVENTS.PAGE_VIEW, {
+    await track(userId, sessionId, EVENTS.PAGE_VIEW, {
       ...baseMeta,
       page: `/product/${product.productId}`,
     });
     await sleep(50);
 
-    await sendEvent(userId, sessionId, EVENTS.PRODUCT_VIEW, {
+    await track(userId, sessionId, EVENTS.PRODUCT_VIEW, {
       ...baseMeta,
       page: `/product/${product.productId}`,
       productId: product.productId,
@@ -256,10 +257,9 @@ async function simulateUser(userNum) {
     });
     await sleep(100);
 
-    // Add to cart (35%)
     if (chance(35)) {
       cart.push(product);
-      await sendEvent(userId, sessionId, EVENTS.ADD_TO_CART, {
+      await track(userId, sessionId, EVENTS.ADD_TO_CART, {
         ...baseMeta,
         productId: product.productId,
         productName: product.productName,
@@ -267,10 +267,9 @@ async function simulateUser(userNum) {
       });
       await sleep(100);
 
-      // Remove from cart (20% of adds)
       if (chance(20)) {
         cart.pop();
-        await sendEvent(userId, sessionId, EVENTS.REMOVE_FROM_CART, {
+        await track(userId, sessionId, EVENTS.REMOVE_FROM_CART, {
           ...baseMeta,
           productId: product.productId,
           productName: product.productName,
@@ -281,13 +280,11 @@ async function simulateUser(userNum) {
     }
   }
 
-  // Checkout and purchase (only if cart has items)
   if (cart.length > 0) {
-    // Checkout start (70% of users with items in cart)
     if (chance(70)) {
       const cartTotal = cart.reduce((sum, p) => sum + p.price, 0);
 
-      await sendEvent(userId, sessionId, EVENTS.CHECKOUT_START, {
+      await track(userId, sessionId, EVENTS.CHECKOUT_START, {
         ...baseMeta,
         page: "/checkout",
         cartSize: cart.length,
@@ -295,9 +292,8 @@ async function simulateUser(userNum) {
       });
       await sleep(100);
 
-      // Purchase (60% of users who start checkout)
       if (chance(60)) {
-        await sendEvent(userId, sessionId, EVENTS.PURCHASE, {
+        await track(userId, sessionId, EVENTS.PURCHASE, {
           ...baseMeta,
           page: "/checkout/confirm",
           items: cart.map((p) => ({
@@ -311,6 +307,8 @@ async function simulateUser(userNum) {
       }
     }
   }
+
+  return counts;
 }
 
 // --- Run simulation ---
@@ -318,11 +316,22 @@ async function simulateUser(userNum) {
 async function simulate() {
   console.log(`Simulating ${NUM_USERS} users...\n`);
 
+  const eventCounts = {};
+
   for (let i = 1; i <= NUM_USERS; i++) {
-    await simulateUser(i);
-    await sleep(200); // gap between users
+    const counts = await simulateUser(i);
+    for (const [event, count] of Object.entries(counts)) {
+      eventCounts[event] = (eventCounts[event] || 0) + count;
+    }
+    await sleep(200);
   }
 
+  console.log("\n\n\n");
+  console.log("NUM_USERS:", NUM_USERS);
+  console.log("\n--- Event Summary ---");
+  for (const [event, count] of Object.entries(eventCounts)) {
+    console.log(`  ${event}: ${count}`);
+  }
   console.log("\nDone.");
 }
 
