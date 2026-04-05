@@ -53,6 +53,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
       redisRepository.recordEvent(eventRecord.getEventType());
     } catch (Exception e) {
       // Errors should go to DLQ after 2 failed attempts
+      // TODO: Implement DLQ
       e.printStackTrace();
     }
   }
