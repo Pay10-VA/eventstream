@@ -16,11 +16,13 @@ public class RedisRepositoryImpl implements RedisRepositoryInterface {
     this.redisTemplate = redisTemplate;
   }
 
+  @Override
   public void recordEvent(String key) {
     long now = System.currentTimeMillis();
     redisTemplate.opsForZSet().add(key, String.valueOf(now), now);
   }
 
+  @Override
   public int getCountLastTenMinutes(String key) {
     long now = System.currentTimeMillis();
     long windowStart = now - this.LAST_10_MINUTES_MS;
