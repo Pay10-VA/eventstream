@@ -1,0 +1,151 @@
+openapi: 3.0.3
+info:
+  title: Event Analytics API
+  version: 1.0.0
+  description: API for ingesting events into the analytics system.
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: Health
+    description: Endpoints related to health checks and system status
+  - name: Events
+    description: Endpoints for handling/processing events
+  - name: Analytics
+    description: Endpoints for retrieving analytics data
+
+paths:
+  /api/health:
+    get:
+      summary: Health check endpoint
+      tags:
+        - Health
+      responses:
+        "200":
+          description: OK
+
+  /api/events:
+    post:
+      summary: Ingest an event into the analytics system
+      tags:
+        - Events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventRequest"
+      responses:
+        "200":
+          description: Event ingested successfully
+        "400":
+          description: Bad request - invalid event data
+
+  /api/analytics/counts:
+    get:
+      summary: Return all event counts for each event type in the last 10 minutes
+      tags:
+        - Analytics
+      responses:
+        "200":
+          description: Event counts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventCountsResponse"
+        "400":
+          description: Bad request - invalid query parameters
+
+components:
+  schemas:
+    EventRequest:
+      type: object
+      required:
+        - eventType
+        - timestamp
+        - userId
+        - sessionId
+        - metadata
+      properties:
+        eventType:
+          type: string
+          description: Type of the event (e.g., "page_view", "click")
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the event occurred
+        userId:
+          type: string
+          description: Unique identifier for the user
+        sessionId:
+          type: string
+          description: Unique identifier for the session
+          example: "abc123-session"
+        metadata:
+          type: object
+          description: Additional data related to the event
+          properties:
+            page:
+              type: string
+              description: The page where the event occurred
+              example: "/home"
+            productId:
+              type: string
+              description: The ID of the product involved in the event
+              example: "prod-456"
+            productName:
+              type: string
+              description: The name of the product involved in the event
+              example: "Widget A"
+            price:
+              type: number
+              description: The price of the product involved in the event
+              example: 19.99
+            deviceType:
+              type: string
+              description: The type of device used for the event
+              example: "mobile"
+    EventCountsResponse:
+      type: object
+      required:
+        - pageViewCount
+        - productViewCount
+        - addToCartCount
+        - removeFromCartCount
+        - checkoutStartCount
+        - purchaseCount
+        - searchCount
+        - sessionStartCount
+      properties:
+        pageViewCount:
+          type: number
+          description: Number of page view events
+          example: 5
+        productViewCount:
+          type: number
+          description: Number of product view events
+          example: 3
+        addToCartCount:
+          type: number
+          description: Number of add to cart events
+          example: 7
+        removeFromCartCount:
+          type: number
+          description: Number of remove from cart events
+          example: 2
+        checkoutStartCount:
+          type: number
+          description: Number of checkout start events
+          example: 4
+        purchaseCount:
+          type: number
+          description: Number of purchase events
+          example: 1
+        searchCount:
+          type: number
+          description: Number of search events
+          example: 6
+        sessionStartCount:
+          type: number
+          description: Number of session start events
+          example: 8
