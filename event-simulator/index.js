@@ -159,8 +159,6 @@ const PRODUCTS = [
   },
 ];
 
-// --- Utility functions ---
-
 function getUUID() {
   return crypto.randomUUID();
 }
@@ -181,8 +179,6 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// --- Send event ---
-
 async function sendEvent(userId, sessionId, eventType, meta = {}) {
   try {
     const body = {
@@ -198,8 +194,6 @@ async function sendEvent(userId, sessionId, eventType, meta = {}) {
     console.error(`  [${eventType}] FAILED — ${err.message}`);
   }
 }
-
-// --- Simulate one user session ---
 
 async function simulateUser(userNum) {
   const userId = `usr_${getUUID().slice(0, 8)}`;
@@ -308,30 +302,45 @@ async function simulateUser(userNum) {
     }
   }
 
-  return counts;
+  return { userId, counts };
 }
-
-// --- Run simulation ---
 
 async function simulate() {
   console.log(`Simulating ${NUM_USERS} users...\n`);
 
   const eventCounts = {};
+  const userEventCounts = {};
 
   for (let i = 1; i <= NUM_USERS; i++) {
-    const counts = await simulateUser(i);
+    const { userId, counts } = await simulateUser(i);
+
+    // Tally global counts
     for (const [event, count] of Object.entries(counts)) {
       eventCounts[event] = (eventCounts[event] || 0) + count;
     }
+
+    // Store per user counts
+    userEventCounts[userId] = counts;
+
     await sleep(200);
   }
 
   console.log("\n\n\n");
   console.log("NUM_USERS:", NUM_USERS);
-  console.log("\n--- Event Summary ---");
+
+  console.log("\n--- Event Summary (Overall) ---");
   for (const [event, count] of Object.entries(eventCounts)) {
     console.log(`  ${event}: ${count}`);
   }
+
+  console.log("\n--- Event Summary (By User) ---");
+  for (const [userId, counts] of Object.entries(userEventCounts)) {
+    console.log(`\n  ${userId}`);
+    for (const [event, count] of Object.entries(counts)) {
+      console.log(`    ${event}: ${count}`);
+    }
+  }
+
   console.log("\nDone.");
 }
 

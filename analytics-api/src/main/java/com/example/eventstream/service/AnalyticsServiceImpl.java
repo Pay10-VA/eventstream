@@ -16,12 +16,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
   }
 
   @Override
-  public EventCounts retrieveCurrEventCounts() {
+  public EventCounts retrieveCurrEventCounts(String userId) {
     EventCounts eventCounts = new EventCounts();
 
     // Iterate through all event types and get the count for each one
     for (EventType eventType : EventType.values()) {
-      int count = redisRepository.getCountLastTenMinutes(eventType.name()); 
+      String key = (userId != null) ? userId + ":" + eventType.name() : eventType.name();
+      int count = redisRepository.getCountLastTenMinutes(key);
       switch (eventType) {
         case PAGE_VIEW:
           eventCounts.setPageViewCount(count);

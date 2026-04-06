@@ -22,13 +22,12 @@ public class AnalyticsController {
 
   @GetMapping("/counts")
   public EventCounts getEventCounts() {
-      return this.analyticsService.retrieveCurrEventCounts();
+      return this.analyticsService.retrieveCurrEventCounts(null);
   }
 
-  // TODO
   @GetMapping("/counts/user/{userId}")
-  public String getCountByUserId(@PathVariable String userId) {
-      return new String();
+  public EventCounts getCountByUserId(@PathVariable String userId) {
+      return this.analyticsService.retrieveCurrEventCounts(userId);
   }
   
 }

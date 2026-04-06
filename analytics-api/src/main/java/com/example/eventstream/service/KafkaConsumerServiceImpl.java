@@ -49,8 +49,11 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
       // Write to DB
       eventRepository.save(eventRecord);
 
-      // Write to redis
+      // Write to redis (Overall counts)
       redisRepository.recordEvent(eventRecord.getEventType());
+
+      // Write to redis (Counts by userId)
+      redisRepository.recordEvent(eventRecord.getUserId() + ":" + eventRecord.getEventType());
     } catch (Exception e) {
       // Errors should go to DLQ after 2 failed attempts
       // TODO: Implement DLQ
