@@ -6,22 +6,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.eventstream.model.EventCounts;
-import com.example.eventstream.service.interfaces.EventService;
+import com.example.eventstream.service.interfaces.AnalyticsService;
 
 
 
 @RestController
 @RequestMapping("/api/analytics")
 public class AnalyticsController {
-  private final EventService eventService;
 
-  public AnalyticsController(EventService eventService) {
-    this.eventService = eventService;
+  private final AnalyticsService analyticsService;
+
+  public AnalyticsController(AnalyticsService analyticsService) {
+    this.analyticsService = analyticsService; 
   }
 
   @GetMapping("/counts")
   public EventCounts getEventCounts() {
-      return this.eventService.retrieveCurrEventCounts();
+      return this.analyticsService.retrieveCurrEventCounts();
   }
 
   // TODO
