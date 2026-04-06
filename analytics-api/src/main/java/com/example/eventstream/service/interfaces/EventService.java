@@ -1,5 +1,9 @@
 package com.example.eventstream.service.interfaces;
 
+import org.springframework.data.domain.Page;
+
+import com.example.eventstream.model.EventRecord;
+
 public interface EventService {
-  public void testing();
+  public Page<EventRecord> getEventsByUserId(String userId, int page, int size);
 }

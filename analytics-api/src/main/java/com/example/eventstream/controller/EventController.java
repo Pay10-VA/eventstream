@@ -1,16 +1,21 @@
 package com.example.eventstream.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.eventstream.dto.EventRequest;
+import com.example.eventstream.service.interfaces.EventService;
 import com.example.eventstream.service.interfaces.KafkaProducerService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import com.example.eventstream.model.EventRecord;
 
 
 
@@ -21,9 +26,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class EventController {
 
     private final KafkaProducerService kafkaProducer;
+    private final EventService eventService;
 
-    public EventController(KafkaProducerService kafkaProducer) {
+    public EventController(KafkaProducerService kafkaProducer, EventService eventService) {
         this.kafkaProducer = kafkaProducer;
+        this.eventService = eventService;
     }
 
   @PostMapping
@@ -32,13 +39,12 @@ public class EventController {
       return ResponseEntity.ok().build();
   }
 
-  // TODO
   @GetMapping("/user/{userId}")
-  public String getEventsByUserId(@PathVariable String userId) {
-      return new String();
+  public Page<EventRecord> getEventsByUserId(@PathVariable String userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+      return this.eventService.getEventsByUserId(userId, page, size);
   }
 
-  // TODO
+  // TODO - PAGINATE!
   @GetMapping("/session/{sessionId}")
   public String getEventsBySessionId(@PathVariable String sessionId) {
       return new String();
