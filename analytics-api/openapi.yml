@@ -40,6 +40,43 @@ paths:
           description: Event ingested successfully
         "400":
           description: Bad request - invalid event data
+  /api/events/user/{userId}:
+    get:
+      summary: Retrieve all events for a specific user
+      tags:
+        - Events
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the user
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Page number for pagination (default is 0)
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of events per page for pagination (default is 10)
+      responses:
+        "200":
+          description: Events retrieved successfully for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserEvent"
+        "400":
+          description: Bad request - invalid userId parameter
 
   /api/analytics/counts:
     get:
@@ -79,6 +116,99 @@ paths:
 
 components:
   schemas:
+    UserEvent:
+      type: object
+      properties:
+        content:
+          type: array
+          description: List of events for the user
+          items:
+            $ref: "#/components/schemas/EventRequest"
+        pageable:
+          type: object
+          properties:
+            pageNumber:
+              type: number
+              description: Current page number
+              example: 0
+            pageSize:
+              type: number
+              description: Number of events per page
+              example: 10
+            sort:
+              type: object
+              properties:
+                sorted:
+                  type: boolean
+                  description: Indicates if the results are sorted
+                  example: true
+                unsorted:
+                  type: boolean
+                  description: Indicates if the results are unsorted
+                  example: false
+                empty:
+                  type: boolean
+                  description: Indicates if the sort is empty
+                  example: false
+            offset:
+              type: number
+              description: The offset of the current page
+              example: 0
+            paged:
+              type: boolean
+              description: Indicates if the results are paged
+              example: true
+            unpaged:
+              type: boolean
+              description: Indicates if the results are unpaged
+              example: false
+        totalElements:
+          type: number
+          description: Total number of events for the user
+          example: 25
+        totalPages:
+          type: number
+          description: Total number of pages available
+          example: 3
+        last:
+          type: boolean
+          description: Indicates if this is the last page
+          example: false
+        numberOfElements:
+          type: number
+          description: Number of events in the current page
+          example: 10
+        first:
+          type: boolean
+          description: Indicates if this is the first page
+          example: true
+        size:
+          type: number
+          description: Number of events per page
+          example: 10
+        number:
+          type: number
+          description: Current page number
+          example: 0
+        sorted:
+          type: object
+          properties:
+            sorted:
+              type: boolean
+              description: Indicates if the results are sorted
+              example: true
+            unsorted:
+              type: boolean
+              description: Indicates if the results are unsorted
+              example: false
+            empty:
+              type: boolean
+              description: Indicates if the sort is empty
+              example: false
+        empty:
+          type: boolean
+          description: Indicates if the page is empty
+          example: false
     EventRequest:
       type: object
       required:
