@@ -55,6 +55,27 @@ paths:
                 $ref: "#/components/schemas/EventCountsResponse"
         "400":
           description: Bad request - invalid query parameters
+  /api/analytics/counts/{userId}:
+    get:
+      summary: Return all event counts for each event type in the last 10 minutes for a specific user
+      tags:
+        - Analytics
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the user
+      responses:
+        "200":
+          description: Event counts retrieved successfully for the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventCountsResponse"
+        "400":
+          description: Bad request - invalid userId parameter
 
 components:
   schemas:
