@@ -10,21 +10,16 @@ EventStream is a real-time event ingestion and analytics platform built with Jav
 
 ## Features
 
-- Event Ingestion: REST API endpoint for receiving user behavior events from any client
-
-- Kafka Streaming: Events are published to a Kafka topic and consumed asynchronously to decouple ingestion from processing
-
-- Retry & DLQ: Failed events are retried automatically before being routed to a dead letter queue
-
-- Persistent Storage: All events are stored in MongoDB for historical querying and replay
-
-- Real-time Analytics: Redis sliding window tracks live event counts over the last 10 minutes
-
-- User Journey Lookup: Query all events tied to a specific user or session
-
-- Dockerized Infrastructure: Kafka, Kafka UI, MongoDB, and Redis all spun up with a single `docker-compose up -d` command
-
-- Node.js Simulator: Realistic ecommerce event simulation across 15 concurrent users with weighted device types and probabilistic user behavior
+- **Event Ingestion** — REST API endpoint for receiving user behavior events from any client
+- **Kafka Streaming** — Events are published to a Kafka topic and consumed asynchronously to decouple ingestion from processing
+- **Retry & DLQ** — Failed events are retried automatically before being routed to a dead letter queue
+- **Persistent Storage** — All events are stored in MongoDB for historical querying and replay
+- **Real-time Analytics** — Redis sliding window tracks live event counts over the last 10 minutes
+- **Funnel Analysis** — Tracks drop off rates at each stage of the purchase journey from session start to purchase
+- **Top Events & Products** — Identifies the top 5 most frequent event types and most viewed products
+- **User Journey Lookup** — Query all events tied to a specific user or session with pagination
+- **Dockerized Infrastructure** — Kafka, Kafka UI, MongoDB, and Redis all spun up with a single `docker-compose up -d` command
+- **Node.js Simulator** — Realistic ecommerce event simulation across 15 concurrent users with weighted device types and probabilistic user behavior
 
 ## Getting Started
 
@@ -36,18 +31,21 @@ EventStream is a real-time event ingestion and analytics platform built with Jav
 
 ### Events
 
-| Method | Endpoint                          | Description                        |
-| ------ | --------------------------------- | ---------------------------------- |
-| POST   | `/api/events`                     | Ingest a new event into the system |
-| GET    | `/api/events/user/{userId}`       | Get all events for a specific user |
-| GET    | `/api/events/session/{sessionId}` | Get all events within a session    |
+| Method | Endpoint                          | Description                                    |
+| ------ | --------------------------------- | ---------------------------------------------- |
+| POST   | `/api/events`                     | Ingest a new event into the system             |
+| GET    | `/api/events/user/{userId}`       | Get all events for a specific user (paginated) |
+| GET    | `/api/events/session/{sessionId}` | Get all events within a session (paginated)    |
 
 ### Analytics
 
-| Method | Endpoint                              | Description                                        |
-| ------ | ------------------------------------- | -------------------------------------------------- |
-| GET    | `/api/analytics/counts`               | Get real-time event counts for the last 10 minutes |
-| GET    | `/api/analytics/counts/user/{userId}` | Get event counts for a specific user               |
+| Method | Endpoint                             | Description                                                             |
+| ------ | ------------------------------------ | ----------------------------------------------------------------------- |
+| GET    | `/api/analytics/counts`              | Get real-time event counts for the last 10 minutes                      |
+| GET    | `/api/analytics/counts/{userId}`     | Get real-time event counts for a specific user over the last 10 minutes |
+| GET    | `/api/analytics/top-events`          | Get the top 5 most frequent event types                                 |
+| GET    | `/api/analytics/top-viewed-products` | Get the top 5 most viewed products                                      |
+| GET    | `/api/analytics/funnel`              | Get drop off rates for each stage of the purchase funnel                |
 
 ### Health
 
