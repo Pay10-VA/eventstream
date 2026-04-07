@@ -10,4 +10,6 @@ import com.example.eventstream.model.EventRecord;
 @Repository
 public interface EventRepositoryInterface extends MongoRepository<EventRecord, String> {
   public Page<EventRecord> findByUserId(String userId, Pageable pageable);
+
+  public Page<EventRecord> findBySessionId(String sessionId, Pageable pageable);
 }

@@ -44,10 +44,9 @@ public class EventController {
       return this.eventService.getEventsByUserId(userId, page, size);
   }
 
-  // TODO - PAGINATE!
   @GetMapping("/session/{sessionId}")
-  public String getEventsBySessionId(@PathVariable String sessionId) {
-      return new String();
+  public Page<EventRecord> getEventsBySessionId(@PathVariable String sessionId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+      return this.eventService.getEventsBySessionId(sessionId, page, size);
   }
   
 }

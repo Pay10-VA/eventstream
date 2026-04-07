@@ -78,6 +78,30 @@ paths:
         "400":
           description: Bad request - invalid userId parameter
 
+  /api/events/session/{sessionId}:
+    get:
+      summary: Retrieve all events for a specific session
+      tags:
+        - Events
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the session
+      responses:
+        "200":
+          description: Events retrieved successfully for the session
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserEvent"
+        "400":
+          description: Bad request - invalid sessionId parameter
+
   /api/analytics/counts:
     get:
       summary: Return all event counts for each event type in the last 10 minutes

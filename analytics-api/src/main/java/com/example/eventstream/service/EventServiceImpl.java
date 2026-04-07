@@ -22,4 +22,10 @@ public class EventServiceImpl implements EventService {
     Pageable pageable = PageRequest.of(page, size);
     return this.eventRepository.findByUserId(userId, pageable);
   }
+
+  @Override
+  public Page<EventRecord> getEventsBySessionId(String sessionId, int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    return this.eventRepository.findBySessionId(sessionId, pageable);
+  }
 }
