@@ -6,7 +6,11 @@ EventStream is a real-time event ingestion and analytics platform built with Jav
 
 [![My Skills](https://skillicons.dev/icons?i=java,spring,kafka,redis,mongodb,docker,js,nodejs)](https://skillicons.dev)
 
-## Architecture Diagram
+## Data Flow Diagram
+
+<div align="center">
+  <img src="./eventstream.png" alt="Description">
+</div>
 
 ## Features
 
