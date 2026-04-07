@@ -11,6 +11,9 @@ import com.example.eventstream.model.EventCount;
 import com.example.eventstream.model.EventCounts;
 import com.example.eventstream.service.interfaces.AnalyticsService;
 
+import com.example.eventstream.model.ProductViewCount;
+
+
 
 
 
@@ -39,5 +42,9 @@ public class AnalyticsController {
     return this.analyticsService.getTop5Events();
   }
   
+  @GetMapping("/top-viewed-products")
+  public List<ProductViewCount> getTop5ViewedProducts() {
+    return this.analyticsService.getTop5ViewedProducts();
+  }
   
 }

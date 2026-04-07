@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.eventstream.model.EventCount;
 import com.example.eventstream.model.EventRecord;
+import com.example.eventstream.model.ProductViewCount;
 
 @Repository
 public interface EventRepositoryInterface extends MongoRepository<EventRecord, String> {
@@ -23,4 +24,12 @@ public interface EventRepositoryInterface extends MongoRepository<EventRecord, S
     "{ $limit: 5 }"
   })
   public List<EventCount> getTop5MostFrequentEvents();
+
+  @Aggregation(pipeline = {
+    "{ $match: { eventType: 'PRODUCT_VIEW' } }",
+    "{ $group: { _id: '$metadata.productId', productName: { $first: '$metadata.productName' }, viewCount: { $sum: 1 } } }",
+    "{ $sort: { viewCount: -1 } }",
+    "{ $limit: 5 }"
+})
+  public List<ProductViewCount> getTop5ViewedProducts();
 }

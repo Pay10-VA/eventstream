@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.eventstream.enums.EventType;
 import com.example.eventstream.model.EventCount;
 import com.example.eventstream.model.EventCounts;
+import com.example.eventstream.model.ProductViewCount;
 import com.example.eventstream.repository.interfaces.EventRepositoryInterface;
 import com.example.eventstream.repository.interfaces.RedisRepositoryInterface;
 import com.example.eventstream.service.interfaces.AnalyticsService;
@@ -62,5 +63,10 @@ public class AnalyticsServiceImpl implements AnalyticsService {
   @Override
   public List<EventCount> getTop5Events() {
     return this.eventRepository.getTop5MostFrequentEvents();
+  }
+
+  @Override
+  public List<ProductViewCount> getTop5ViewedProducts() {
+    return this.eventRepository.getTop5ViewedProducts();
   }
 }
