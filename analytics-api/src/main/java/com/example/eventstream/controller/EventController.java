@@ -34,7 +34,7 @@ public class EventController {
     }
 
   @PostMapping
-  public ResponseEntity<Void> postMethodName(@RequestBody EventRequest eventRequest) {
+  public ResponseEntity<Void> createEvent(@RequestBody EventRequest eventRequest) {
       kafkaProducer.publishEvent(eventRequest);
       return ResponseEntity.ok().build();
   }
