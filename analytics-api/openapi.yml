@@ -40,6 +40,7 @@ paths:
           description: Event ingested successfully
         "400":
           description: Bad request - invalid event data
+
   /api/events/user/{userId}:
     get:
       summary: Retrieve all events for a specific user
@@ -72,9 +73,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UserEvent"
+                $ref: "#/components/schemas/UserEvent"
         "400":
           description: Bad request - invalid userId parameter
 
@@ -96,9 +95,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UserEvent"
+                $ref: "#/components/schemas/UserEvent"
         "400":
           description: Bad request - invalid sessionId parameter
 
@@ -116,6 +113,7 @@ paths:
                 $ref: "#/components/schemas/EventCountsResponse"
         "400":
           description: Bad request - invalid query parameters
+
   /api/analytics/counts/{userId}:
     get:
       summary: Return all event counts for each event type in the last 10 minutes for a specific user
@@ -151,14 +149,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    eventType:
-                      type: string
-                      description: Type of the event
-                    count:
-                      type: number
-                      description: Count of occurrences for the event type
+                  $ref: "#/components/schemas/EventCount"
         "400":
           description: Bad request - invalid query parameters
 
@@ -175,118 +166,27 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    productId:
-                      type: string
-                      description: Unique identifier for the product
-                      example: "020"
-                    productName:
-                      type: string
-                      description: Name of the product
-                      example: "PowerRoll Foam Roller"
-                    viewCount:
-                      type: number
-                      description: Count of views for the product
-                      example: 10
+                  $ref: "#/components/schemas/ProductViewCount"
         "400":
           description: Bad request - invalid query parameters
 
+  /api/analytics/funnel:
+    get:
+      summary: Return funnel drop off rates for each stage of the user purchase journey
+      tags:
+        - Analytics
+      responses:
+        "200":
+          description: Funnel rates retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FunnelRates"
+        "400":
+          description: Bad request
+
 components:
   schemas:
-    UserEvent:
-      type: object
-      properties:
-        content:
-          type: array
-          description: List of events for the user
-          items:
-            $ref: "#/components/schemas/EventRequest"
-        pageable:
-          type: object
-          properties:
-            pageNumber:
-              type: number
-              description: Current page number
-              example: 0
-            pageSize:
-              type: number
-              description: Number of events per page
-              example: 10
-            sort:
-              type: object
-              properties:
-                sorted:
-                  type: boolean
-                  description: Indicates if the results are sorted
-                  example: true
-                unsorted:
-                  type: boolean
-                  description: Indicates if the results are unsorted
-                  example: false
-                empty:
-                  type: boolean
-                  description: Indicates if the sort is empty
-                  example: false
-            offset:
-              type: number
-              description: The offset of the current page
-              example: 0
-            paged:
-              type: boolean
-              description: Indicates if the results are paged
-              example: true
-            unpaged:
-              type: boolean
-              description: Indicates if the results are unpaged
-              example: false
-        totalElements:
-          type: number
-          description: Total number of events for the user
-          example: 25
-        totalPages:
-          type: number
-          description: Total number of pages available
-          example: 3
-        last:
-          type: boolean
-          description: Indicates if this is the last page
-          example: false
-        numberOfElements:
-          type: number
-          description: Number of events in the current page
-          example: 10
-        first:
-          type: boolean
-          description: Indicates if this is the first page
-          example: true
-        size:
-          type: number
-          description: Number of events per page
-          example: 10
-        number:
-          type: number
-          description: Current page number
-          example: 0
-        sorted:
-          type: object
-          properties:
-            sorted:
-              type: boolean
-              description: Indicates if the results are sorted
-              example: true
-            unsorted:
-              type: boolean
-              description: Indicates if the results are unsorted
-              example: false
-            empty:
-              type: boolean
-              description: Indicates if the sort is empty
-              example: false
-        empty:
-          type: boolean
-          description: Indicates if the page is empty
-          example: false
     EventRequest:
       type: object
       required:
@@ -334,6 +234,72 @@ components:
               type: string
               description: The type of device used for the event
               example: "mobile"
+
+    UserEvent:
+      type: object
+      properties:
+        content:
+          type: array
+          description: List of events for the user
+          items:
+            $ref: "#/components/schemas/EventRequest"
+        pageable:
+          type: object
+          properties:
+            pageNumber:
+              type: number
+              description: Current page number
+              example: 0
+            pageSize:
+              type: number
+              description: Number of events per page
+              example: 10
+            sort:
+              type: object
+              properties:
+                sorted:
+                  type: boolean
+                  example: true
+                unsorted:
+                  type: boolean
+                  example: false
+                empty:
+                  type: boolean
+                  example: false
+            offset:
+              type: number
+              example: 0
+            paged:
+              type: boolean
+              example: true
+            unpaged:
+              type: boolean
+              example: false
+        totalElements:
+          type: number
+          example: 25
+        totalPages:
+          type: number
+          example: 3
+        last:
+          type: boolean
+          example: false
+        numberOfElements:
+          type: number
+          example: 10
+        first:
+          type: boolean
+          example: true
+        size:
+          type: number
+          example: 10
+        number:
+          type: number
+          example: 0
+        empty:
+          type: boolean
+          example: false
+
     EventCountsResponse:
       type: object
       required:
@@ -378,3 +344,76 @@ components:
           type: number
           description: Number of session start events
           example: 8
+
+    EventCount:
+      type: object
+      properties:
+        eventType:
+          type: string
+          description: Type of the event
+          example: "PAGE_VIEW"
+        count:
+          type: integer
+          description: Number of occurrences for the event type
+          example: 42
+
+    ProductViewCount:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Unique identifier for the product
+          example: "020"
+        productName:
+          type: string
+          description: Name of the product
+          example: "PowerRoll Foam Roller"
+        viewCount:
+          type: integer
+          description: Number of views for the product
+          example: 10
+
+    FunnelStep:
+      type: object
+      required:
+        - count
+        - dropOffRate
+      properties:
+        count:
+          type: integer
+          description: Number of unique sessions that reached this stage
+          example: 45
+        dropOffRate:
+          type: number
+          description: Percentage of users who dropped off from the previous stage
+          example: 31.7
+
+    FunnelRates:
+      type: object
+      required:
+        - sessionStartCount
+        - pageView
+        - productView
+        - addToCart
+        - checkoutStart
+        - purchase
+        - overallConversionRate
+      properties:
+        sessionStartCount:
+          type: integer
+          description: Total number of sessions that started
+          example: 60
+        pageView:
+          $ref: "#/components/schemas/FunnelStep"
+        productView:
+          $ref: "#/components/schemas/FunnelStep"
+        addToCart:
+          $ref: "#/components/schemas/FunnelStep"
+        checkoutStart:
+          $ref: "#/components/schemas/FunnelStep"
+        purchase:
+          $ref: "#/components/schemas/FunnelStep"
+        overallConversionRate:
+          type: number
+          description: Percentage of sessions that resulted in a purchase
+          example: 25.0
