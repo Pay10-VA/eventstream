@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.eventstream.model.EventRecord;
 
+import jakarta.validation.Valid;
+
 
 
 
@@ -34,7 +36,7 @@ public class EventController {
     }
 
   @PostMapping
-  public ResponseEntity<Void> createEvent(@RequestBody EventRequest eventRequest) {
+  public ResponseEntity<Void> createEvent(@Valid @RequestBody EventRequest eventRequest) {
       kafkaProducer.publishEvent(eventRequest);
       return ResponseEntity.ok().build();
   }
