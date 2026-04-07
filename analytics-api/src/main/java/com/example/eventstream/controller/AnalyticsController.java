@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.eventstream.model.EventCount;
 import com.example.eventstream.model.EventCounts;
+import com.example.eventstream.model.FunnelRates;
 import com.example.eventstream.service.interfaces.AnalyticsService;
 
 import com.example.eventstream.model.ProductViewCount;
-
-
 
 
 
@@ -45,6 +44,11 @@ public class AnalyticsController {
   @GetMapping("/top-viewed-products")
   public List<ProductViewCount> getTop5ViewedProducts() {
     return this.analyticsService.getTop5ViewedProducts();
+  }
+
+  @GetMapping("/funnel")
+  public FunnelRates getFunnelAnalysis() {
+    return this.analyticsService.getFunnelAnalysis();
   }
   
 }

@@ -30,6 +30,12 @@ public interface EventRepositoryInterface extends MongoRepository<EventRecord, S
     "{ $group: { _id: '$metadata.productId', productName: { $first: '$metadata.productName' }, viewCount: { $sum: 1 } } }",
     "{ $sort: { viewCount: -1 } }",
     "{ $limit: 5 }"
-})
+  })
   public List<ProductViewCount> getTop5ViewedProducts();
+
+  @Aggregation(pipeline = {
+    "{ $group: { _id: { eventType: '$eventType', sessionId: '$sessionId' } } }",
+    "{ $group: { _id: '$_id.eventType', count: { $sum: 1 } } }"
+  })
+  List<EventCount> getEventCountsByEventType();
 }
