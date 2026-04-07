@@ -138,6 +138,30 @@ paths:
         "400":
           description: Bad request - invalid userId parameter
 
+  /api/analytics/top-events:
+    get:
+      summary: Return the top 5 most common events in the last 10 minutes
+      tags:
+        - Analytics
+      responses:
+        "200":
+          description: Top events retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    eventType:
+                      type: string
+                      description: Type of the event
+                    count:
+                      type: number
+                      description: Count of occurrences for the event type
+        "400":
+          description: Bad request - invalid query parameters
+
 components:
   schemas:
     UserEvent:

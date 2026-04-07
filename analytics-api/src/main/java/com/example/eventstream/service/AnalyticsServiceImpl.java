@@ -1,18 +1,24 @@
 package com.example.eventstream.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.eventstream.enums.EventType;
+import com.example.eventstream.model.EventCount;
 import com.example.eventstream.model.EventCounts;
+import com.example.eventstream.repository.interfaces.EventRepositoryInterface;
 import com.example.eventstream.repository.interfaces.RedisRepositoryInterface;
 import com.example.eventstream.service.interfaces.AnalyticsService;
 
 @Service
 public class AnalyticsServiceImpl implements AnalyticsService {
   private final RedisRepositoryInterface redisRepository;
+  private final EventRepositoryInterface eventRepository;
 
-  public AnalyticsServiceImpl(RedisRepositoryInterface redisRepository) {
+  public AnalyticsServiceImpl(RedisRepositoryInterface redisRepository, EventRepositoryInterface eventRepository) {
     this.redisRepository = redisRepository;
+    this.eventRepository = eventRepository;
   }
 
   @Override
@@ -51,5 +57,10 @@ public class AnalyticsServiceImpl implements AnalyticsService {
       }
     }
     return eventCounts;
+  }
+
+  @Override
+  public List<EventCount> getTop5Events() {
+    return this.eventRepository.getTop5MostFrequentEvents();
   }
 }
