@@ -9,9 +9,8 @@ import lombok.Data;
 @Document(collection = "events")
 @Data
 public class EventRecord {
-
   @Id
-  private String id;
+  private String eventId;
   private String userId;
   private String sessionId;
   private String eventType;

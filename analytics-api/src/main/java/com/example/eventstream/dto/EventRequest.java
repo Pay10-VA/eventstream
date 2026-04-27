@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class EventRequest {
 
+  private String eventId;
+
   @NotBlank
   private String userId;
 

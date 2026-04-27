@@ -25,3 +25,4 @@ spring:
       host: localhost
       port: 27017
       database: eventstream
+      auto-index-creation: true

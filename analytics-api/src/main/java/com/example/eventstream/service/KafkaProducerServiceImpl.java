@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.example.eventstream.dto.EventRequest;
 import com.example.eventstream.service.interfaces.KafkaProducerService;
 
+import java.util.UUID;
+
 @Service
 public class KafkaProducerServiceImpl implements KafkaProducerService {
   private final KafkaTemplate<String, EventRequest> kafkaTemplate;
@@ -15,6 +17,7 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
   }
 
   public void publishEvent(EventRequest message) {
+    message.setEventId(UUID.randomUUID().toString());
     kafkaTemplate.send("test-topic", message);
   }
 }
